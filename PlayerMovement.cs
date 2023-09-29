@@ -9,9 +9,10 @@ public class PlayerMovement : MonoBehaviour
     Vector2 movement;
     public float moveSpeed = 20f;
     Collider2D currentTrigger = null;
-    ArrayList inventory = new ArrayList();
-    public Camera[] cameras = new Camera[8];
-    // Start is called before the first frame update
+    public ArrayList inventory = new ArrayList();
+    public Camera[] cameras = new Camera[2];
+    // public Light2D 
+
     void Start()
     {
         for (int i = 1; i < cameras.Length; i++)
@@ -22,20 +23,28 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (currentTrigger != null) 
+        if (currentTrigger != null)
         {
             if (Input.GetButtonDown("Interact"))
             {
-                if (currentTrigger.tag == "Collectable") 
+                if (currentTrigger.tag == "Collectable")
                 {
+
                     inventory.Add(currentTrigger.gameObject.name);
-                    Debug.Log(inventory.IndexOf(currentTrigger.gameObject.name));
-                    Destroy(currentTrigger.GetComponent("SpriteRenderer"));
-                    if (currentTrigger.GetComponent("BoxCollider2D") != null)
+
+                    if (string.Equals(currentTrigger.gameObject.name, "Flashlight"))
                     {
-                        Destroy(currentTrigger.GetComponent("BoxCollider2D"));
+                        gameObject.transform.GetChild(0).gameObject.SetActive(true);
                     }
+
+                    Destroy(currentTrigger.GetComponent("SpriteRenderer"));
                     Destroy(currentTrigger);
+
+
+                } 
+                else if (string.Equals(currentTrigger.gameObject.name, "BreakerTrigger"))
+                {
+                    
                 }
                 else if (currentTrigger.tag == "UpDoor")
                 {
@@ -47,7 +56,8 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[0].enabled = false;
                         cameras[1].enabled = true;
-                    } else if (doorName == "StorageToHallway")
+                    }
+                    else if (doorName == "StorageToHallway")
                     {
                         cameras[2].enabled = false;
                         cameras[3].enabled = true;
@@ -56,21 +66,6 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[1].enabled = false;
                         cameras[4].enabled = true;
-                    }
-                    else if (doorName == "EggletonToHallway")
-                    {
-                        cameras[7].enabled = false;
-                        cameras[5].enabled = true;
-                    }
-                    else if (doorName == "HallwayToBarnes")
-                    {
-                        cameras[3].enabled = false;
-                        cameras[6].enabled = true;
-                    }
-                    else if (doorName == "HallwayToRivero")
-                    {
-                        cameras[5].enabled = false;
-                        cameras[8].enabled = true;
                     }
                 }
                 else if (currentTrigger.tag == "DownDoor")
@@ -89,26 +84,6 @@ public class PlayerMovement : MonoBehaviour
                         cameras[3].enabled = false;
                         cameras[2].enabled = true;
                     }
-                    else if (doorName == "LambrightToHallway")
-                    {
-                        cameras[4].enabled = false;
-                        cameras[1].enabled = true;
-                    }
-                    else if (doorName == "DoorToEggletonRoom")
-                    {
-                        cameras[5].enabled = false;
-                        cameras[7].enabled = true;
-                    }
-                    else if (doorName == "BarnesToHallway")
-                    {
-                        cameras[6].enabled = false;
-                        cameras[3].enabled = true;
-                    }
-                    else if (doorName == "RiveroToHallway")
-                    {
-                        cameras[8].enabled = false;
-                        cameras[5].enabled = true;
-                    }
                 }
             }
             else if (currentTrigger.tag == "HallwayCollider")
@@ -124,16 +99,6 @@ public class PlayerMovement : MonoBehaviour
                 {
                     cameras[3].enabled = false;
                     cameras[1].enabled = true;
-                }
-                else if (doorName == "MiddleToLeft")
-                {
-                    cameras[3].enabled = false;
-                    cameras[5].enabled = true;
-                }
-                else if (doorName == "LeftToMiddle")
-                {
-                    cameras[5].enabled = false;
-                    cameras[3].enabled = true;
                 }
             }
         }
@@ -155,5 +120,5 @@ public class PlayerMovement : MonoBehaviour
     {
         currentTrigger = collider;
     }
-    
+
 }
