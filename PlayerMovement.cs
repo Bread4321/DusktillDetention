@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
@@ -11,7 +12,9 @@ public class PlayerMovement : MonoBehaviour
     Collider2D currentTrigger = null;
     public ArrayList inventory = new ArrayList();
     public Camera[] cameras = new Camera[2];
-    // public Light2D 
+    public Light2D globalLight;
+    public GameObject lambrightRoomObjects;
+    private bool physicsMovement = false;
 
     void Start()
     {
@@ -44,7 +47,9 @@ public class PlayerMovement : MonoBehaviour
                 } 
                 else if (string.Equals(currentTrigger.gameObject.name, "BreakerTrigger"))
                 {
-                    
+                    gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                    globalLight.intensity = 1;
+
                 }
                 else if (currentTrigger.tag == "UpDoor")
                 {
@@ -66,6 +71,25 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[1].enabled = false;
                         cameras[4].enabled = true;
+
+                        physicsMovement = true;
+                        rb.freezeRotation = false;
+                        lambrightRoomObjects.SetActive(true);
+                    }
+                    else if (doorName == "EggletonToHallway")
+                    {
+                        cameras[7].enabled = false;
+                        cameras[5].enabled = true;
+                    }
+                    else if (doorName == "HallwayToBarnes")
+                    {
+                        cameras[3].enabled = false;
+                        cameras[6].enabled = true;
+                    }
+                    else if (doorName == "HallwayToRivero")
+                    {
+                        cameras[5].enabled = false;
+                        cameras[8].enabled = true;
                     }
                 }
                 else if (currentTrigger.tag == "DownDoor")
@@ -84,6 +108,31 @@ public class PlayerMovement : MonoBehaviour
                         cameras[3].enabled = false;
                         cameras[2].enabled = true;
                     }
+                    else if (doorName == "LambrightToHallway")
+                    {
+                        cameras[4].enabled = false;
+                        cameras[1].enabled = true;
+
+                        physicsMovement = false;
+                        rb.freezeRotation = true;
+                        transform.rotation = Quaternion.identity;
+                        lambrightRoomObjects.SetActive(false);
+                    }
+                    else if (doorName == "DoorToEggletonRoom")
+                    {
+                        cameras[5].enabled = false;
+                        cameras[7].enabled = true;
+                    }
+                    else if (doorName == "BarnesToHallway")
+                    {
+                        cameras[6].enabled = false;
+                        cameras[3].enabled = true;
+                    }
+                    else if (doorName == "RiveroToHallway")
+                    {
+                        cameras[8].enabled = false;
+                        cameras[5].enabled = true;
+                    }
                 }
             }
             else if (currentTrigger.tag == "HallwayCollider")
@@ -100,6 +149,16 @@ public class PlayerMovement : MonoBehaviour
                     cameras[3].enabled = false;
                     cameras[1].enabled = true;
                 }
+                else if (doorName == "MiddleToLeft")
+                {
+                    cameras[3].enabled = false;
+                    cameras[5].enabled = true;
+                }
+                else if (doorName == "LeftToMiddle")
+                {
+                    cameras[5].enabled = false;
+                    cameras[3].enabled = true;
+                }
             }
         }
         movement.x = Input.GetAxisRaw("Horizontal");
@@ -108,8 +167,13 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
-
+        if (physicsMovement)
+        {
+            rb.AddForce(movement, ForceMode2D.Impulse);
+        } else
+        {
+            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collider)
