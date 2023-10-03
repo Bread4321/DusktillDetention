@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
@@ -11,11 +10,9 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 20f;
     Collider2D currentTrigger = null;
     public ArrayList inventory = new ArrayList();
-    public Camera[] cameras = new Camera[2];
-    public Light2D globalLight;
-    public GameObject lambrightRoomObjects;
-    private bool physicsMovement = false;
-
+    public Camera[] cameras = new Camera[8];
+    public ChickenMovement chicken;
+    // Start is called before the first frame update
     void Start()
     {
         for (int i = 1; i < cameras.Length; i++)
@@ -26,30 +23,56 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (currentTrigger != null)
+        if (currentTrigger != null) 
         {
             if (Input.GetButtonDown("Interact"))
             {
-                if (currentTrigger.tag == "Collectable")
+                if (currentTrigger.tag == "Collectable") 
                 {
-
-                    inventory.Add(currentTrigger.gameObject.name);
-
-                    if (string.Equals(currentTrigger.gameObject.name, "Flashlight"))
+                    if (currentTrigger.gameObject.name == "Bucket")
                     {
-                        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                        if (inventory.Contains("Egg"))
+                        {
+                            chicken.beginChickening();
+                            inventory.Remove("Egg");
+                        }
+                    } else if (currentTrigger.gameObject.name == "Water")
+                    {
+                        if (inventory.Contains("Bucket"))
+                        {
+                            inventory.Remove("Bucket");
+                            inventory.Add("BucketWithWater");
+                            inventory.Add(currentTrigger.gameObject.name);
+                            Destroy(currentTrigger.GetComponent("SpriteRenderer"));
+                            if (currentTrigger.GetComponent("BoxCollider2D") != null)
+                            {
+                                Destroy(currentTrigger.GetComponent("BoxCollider2D"));
+                            }
+                            Destroy(currentTrigger);
+                        }
                     }
-
-                    Destroy(currentTrigger.GetComponent("SpriteRenderer"));
-                    Destroy(currentTrigger);
-
-
-                } 
-                else if (string.Equals(currentTrigger.gameObject.name, "BreakerTrigger"))
-                {
-                    gameObject.transform.GetChild(0).gameObject.SetActive(false);
-                    globalLight.intensity = 1;
-
+                    else if (currentTrigger.gameObject.name == "Fire")
+                    {
+                        if (inventory.Contains("BucketWithWater"))
+                        {
+                            Destroy(currentTrigger.GetComponent("SpriteRenderer"));
+                            if (currentTrigger.GetComponent("BoxCollider2D") != null)
+                            {
+                                Destroy(currentTrigger.GetComponent("BoxCollider2D"));
+                            }
+                            Destroy(currentTrigger);
+                        }
+                    }
+                    else
+                    {
+                        inventory.Add(currentTrigger.gameObject.name);
+                        Destroy(currentTrigger.GetComponent("SpriteRenderer"));
+                        if (currentTrigger.GetComponent("BoxCollider2D") != null)
+                        {
+                            Destroy(currentTrigger.GetComponent("BoxCollider2D"));
+                        }
+                        Destroy(currentTrigger);
+                    }
                 }
                 else if (currentTrigger.tag == "UpDoor")
                 {
@@ -61,8 +84,7 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[0].enabled = false;
                         cameras[1].enabled = true;
-                    }
-                    else if (doorName == "StorageToHallway")
+                    } else if (doorName == "StorageToHallway")
                     {
                         cameras[2].enabled = false;
                         cameras[3].enabled = true;
@@ -71,10 +93,6 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[1].enabled = false;
                         cameras[4].enabled = true;
-
-                        physicsMovement = true;
-                        rb.freezeRotation = false;
-                        lambrightRoomObjects.SetActive(true);
                     }
                     else if (doorName == "EggletonToHallway")
                     {
@@ -112,11 +130,6 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[4].enabled = false;
                         cameras[1].enabled = true;
-
-                        physicsMovement = false;
-                        rb.freezeRotation = true;
-                        transform.rotation = Quaternion.identity;
-                        lambrightRoomObjects.SetActive(false);
                     }
                     else if (doorName == "DoorToEggletonRoom")
                     {
@@ -137,7 +150,6 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (currentTrigger.tag == "HallwayCollider")
             {
-                Debug.Log("Hallway");
                 string doorName = currentTrigger.gameObject.name;
                 if (doorName == "RightToMiddle")
                 {
@@ -160,20 +172,23 @@ public class PlayerMovement : MonoBehaviour
                     cameras[3].enabled = true;
                 }
             }
+            else if (currentTrigger.tag == "Teacher")
+            {
+                Debug.Log("You Died");
+            }
         }
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
+        if (chicken.giveBucket && !inventory.Contains("Bucket"))
+        {
+            inventory.Add("Bucket");
+        }
     }
 
     void FixedUpdate()
     {
-        if (physicsMovement)
-        {
-            rb.AddForce(movement, ForceMode2D.Impulse);
-        } else
-        {
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
-        }
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
     }
 
     private void OnTriggerExit2D(Collider2D collider)
@@ -184,5 +199,5 @@ public class PlayerMovement : MonoBehaviour
     {
         currentTrigger = collider;
     }
-
+    
 }
