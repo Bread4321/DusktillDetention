@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PauseMenuUI : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
     public GameObject inventoryUI;
+    public GameObject gameOverScreen;
     public PlayerMovement playermovement;
     public ArrayList inventory = new ArrayList();
-    
+
 
     void Start()
     {
@@ -21,13 +23,17 @@ public class PauseMenuUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            GameOver();
+            /*
             if (GameIsPaused)
             {
                 Resume();
-            } else
+            }
+            else
             {
                 Pause();
             }
+            */
         }
     }
 
@@ -73,5 +79,18 @@ public class PauseMenuUI : MonoBehaviour
     public void LeaveGame()
     {
         Application.Quit();
+    }
+
+    public void GameOver()
+    {
+        gameOverScreen.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void RestartGame()
+    {
+        gameOverScreen.SetActive(false);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
