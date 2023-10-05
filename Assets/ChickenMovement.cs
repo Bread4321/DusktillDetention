@@ -14,7 +14,7 @@ public class ChickenMovement : MonoBehaviour
     Vector2 set = new Vector2();
     public bool startReturn = false;
     public bool giveBucket = false;
-    
+
     void Start()
     {
         spriteRenderer.enabled = false;
@@ -34,6 +34,9 @@ public class ChickenMovement : MonoBehaviour
         if (rb.position == set)
         {
             StartMoving = true;
+            if (set.x > -34.5f){
+                gameObject.transform.localScale = new Vector3(-1,1,1);
+            }
             spriteRenderer.enabled = true;
 
         }
@@ -45,6 +48,11 @@ public class ChickenMovement : MonoBehaviour
             }
             if (rb.position == bucket)
             {
+                if (set.x > -34.5f){
+                    gameObject.transform.localScale = new Vector3(1,1,1);
+                } else{
+                    gameObject.transform.localScale = new Vector3(-1,1,1);
+                }
                 Destroy(GameObject.Find("Bucket").GetComponent("SpriteRenderer"));
                 Destroy(GameObject.Find("Bucket"));
                 startReturn = true;

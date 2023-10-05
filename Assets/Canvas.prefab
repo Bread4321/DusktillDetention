@@ -1377,6 +1377,7 @@ MonoBehaviour:
   pauseMenuUI: {fileID: 3421710821678619265}
   inventoryUI: {fileID: 3421710822701325385}
   gameOverScreen: {fileID: 8613088814761614324}
+  gameWinScreen: {fileID: 0}
   playermovement: {fileID: 0}
 --- !u!1 &3421710823532968486
 GameObject:

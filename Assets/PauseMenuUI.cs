@@ -10,6 +10,7 @@ public class PauseMenuUI : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject inventoryUI;
     public GameObject gameOverScreen;
+    public GameObject gameWinScreen;
     public PlayerMovement playermovement;
     public ArrayList inventory = new ArrayList();
 
@@ -23,6 +24,7 @@ public class PauseMenuUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+
             if (GameIsPaused)
             {
                 Resume();
@@ -31,6 +33,7 @@ public class PauseMenuUI : MonoBehaviour
             {
                 Pause();
             }
+
         }
     }
 
@@ -50,7 +53,6 @@ public class PauseMenuUI : MonoBehaviour
 
     public void OpenInventory()
     {
-        Debug.Log("Hello");
         pauseMenuUI.SetActive(false);
         inventoryUI.SetActive(true);
 
@@ -90,5 +92,11 @@ public class PauseMenuUI : MonoBehaviour
         gameOverScreen.SetActive(false);
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void WinGame()
+    {
+        gameWinScreen.SetActive(true);
+        Time.timeScale = 0f;
     }
 }

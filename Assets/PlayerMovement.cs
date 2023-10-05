@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     Vector2 movement;
     public float moveSpeed = 20f;
-    Collider2D currentTrigger = null;
+    public Collider2D currentTrigger = null;
     public ArrayList inventory = new ArrayList();
     public Camera[] cameras = new Camera[8];
     public ChickenMovement chicken;
@@ -17,13 +17,20 @@ public class PlayerMovement : MonoBehaviour
     public UnityEngine.Rendering.Universal.Light2D globalLight;
     public GameObject lambrightRoomObjects;
     private bool physicsMovement = false;
+    public AudioManager audioManager;
+    public PauseMenuUI pauseMenuUI;
+    public GameObject CubeOnPedestal;
+    public HannMovement Hann;
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1f;
         for (int i = 1; i < cameras.Length; i++)
         {
             cameras[i].enabled = false;
         }
+
+        audioManager.Play("Scheming-Weasel", true);
     }
 
     void Update()
@@ -41,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
                             chicken.beginChickening();
                             inventory.Remove("Egg");
                         }
-                    } else if (string.Equals(currentTrigger.gameObject.name, "Flashlight"))
+                    } else if (currentTrigger.gameObject.name == "Flashlight")
                     {
                         gameObject.transform.GetChild(0).gameObject.SetActive(true);
                         inventory.Add(currentTrigger.gameObject.name);
@@ -62,6 +69,16 @@ public class PlayerMovement : MonoBehaviour
                             {
                                 Destroy(currentTrigger.GetComponent("BoxCollider2D"));
                             }
+                            Destroy(currentTrigger);
+                        }
+                    }else if (currentTrigger.gameObject.name == "Pedestal")
+                    {
+                        if (inventory.Contains("RubiksCube"))
+                        {
+                            inventory.Remove("RubiksCube");
+                            SpriteRenderer spriteRenderer = (SpriteRenderer)CubeOnPedestal.GetComponent("SpriteRenderer");
+                            spriteRenderer.sprite = Resources.Load<Sprite>("RubiksCube");
+                            Hann.GoToPedestal();
                             Destroy(currentTrigger);
                         }
                     }
@@ -99,10 +116,16 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[0].enabled = false;
                         cameras[1].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Sneaky-Snitch", true);
                     } else if (doorName == "StorageToHallway")
                     {
                         cameras[2].enabled = false;
                         cameras[3].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Sneaky-Snitch", true);
                     }
                     else if (doorName == "HallwayToLambright")
                     {
@@ -111,21 +134,33 @@ public class PlayerMovement : MonoBehaviour
                         physicsMovement = true;
                         rb.freezeRotation = false;
                         lambrightRoomObjects.SetActive(true);
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Suspense", true);
                     }
                     else if (doorName == "EggletonToHallway")
                     {
                         cameras[7].enabled = false;
                         cameras[5].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Sneaky-Snitch", true);
                     }
                     else if (doorName == "HallwayToBarnes")
                     {
                         cameras[3].enabled = false;
                         cameras[6].enabled = true;
+                         audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Scheming-Weasel", true);
                     }
                     else if (doorName == "HallwayToRivero")
                     {
                         cameras[5].enabled = false;
                         cameras[8].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Scheming-Weasel", true);
                     }
                 }
                 else if (currentTrigger.tag == "DownDoor")
@@ -138,11 +173,16 @@ public class PlayerMovement : MonoBehaviour
                     {
                         cameras[1].enabled = false;
                         cameras[0].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Scheming-Weasel", true);
                     }
                     else if (doorName == "DoorToStorageRoom")
                     {
                         cameras[3].enabled = false;
                         cameras[2].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("FireSound", true);
                     }
                     else if (doorName == "LambrightToHallway")
                     {
@@ -152,27 +192,44 @@ public class PlayerMovement : MonoBehaviour
                         rb.freezeRotation = true;
                         transform.rotation = Quaternion.identity;
                         lambrightRoomObjects.SetActive(false);
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Sneaky-Snitch", true);
                     }
                     else if (doorName == "DoorToEggletonRoom")
                     {
                         cameras[5].enabled = false;
                         cameras[7].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Scheming-Weasel", true);
                     }
                     else if (doorName == "BarnesToHallway")
                     {
                         cameras[6].enabled = false;
                         cameras[3].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Sneaky-Snitch", true);
                     }
                     else if (doorName == "RiveroToHallway")
                     {
                         cameras[8].enabled = false;
                         cameras[5].enabled = true;
+                        audioManager.Clear();
+                        audioManager.Play("DoorOpen", false);
+                        audioManager.Play("Sneaky-Snitch", true);
                     }
                 } else if (string.Equals(currentTrigger.gameObject.name, "BreakerTrigger"))
                 {
                     gameObject.transform.GetChild(0).gameObject.SetActive(false);
                     globalLight.intensity = 1;
-
+                    audioManager.Play("Switch", false);
+                } else if (currentTrigger.gameObject.name == "FinalDoor" && inventory.Contains("Key"))
+                {
+                    audioManager.Clear();
+                    Debug.Log("You win!");
+                    pauseMenuUI.WinGame();
                 }
             }
             else if (currentTrigger.tag == "HallwayCollider")
@@ -201,7 +258,9 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (currentTrigger.tag == "Teacher")
             {
-                Debug.Log("You Died");
+                audioManager.Clear();
+                audioManager.Play("Lose", true);
+                pauseMenuUI.GameOver();
             }
         }
         movement.x = Input.GetAxisRaw("Horizontal");
