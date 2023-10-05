@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LambrightMovement : MonoBehaviour
+public class BarnesMovement : MonoBehaviour
 {
     public Rigidbody2D rb;
     public Vector2[] positions = new Vector2[4];
@@ -13,10 +13,10 @@ public class LambrightMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        positions[0] = new Vector2(-9f, 33f);
-        positions[1] = new Vector2(6.5f, 33f);
-        positions[2] = new Vector2(6.5f, 37f);
-        positions[3] = new Vector2(-9f, 37f);
+        positions[0] = new Vector2(-32f, 34f);
+        positions[1] = new Vector2(-27.5f, 34f);
+        positions[2] = new Vector2(-27.5f, 39f);
+        positions[3] = new Vector2(-22f, 34f);
         rb.position = positions[0];
     }
 
@@ -42,13 +42,21 @@ public class LambrightMovement : MonoBehaviour
         }
         else if (moveState == 2)
         {
+            rb.position = Vector3.MoveTowards(rb.position, positions[1], Time.deltaTime * speed);
+            if (rb.position == positions[1])
+            {
+                moveState++;
+            }
+        }
+        else if (moveState == 3)
+        {
             rb.position = Vector3.MoveTowards(rb.position, positions[3], Time.deltaTime * speed);
             if (rb.position == positions[3])
             {
                 moveState++;
             }
         }
-        else if (moveState == 3)
+        else if (moveState == 4)
         {
             rb.position = Vector3.MoveTowards(rb.position, positions[0], Time.deltaTime * speed);
             if (rb.position == positions[0])

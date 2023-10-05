@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LambrightMovement : MonoBehaviour
+public class EggletonMovement : MonoBehaviour
 {
     public Rigidbody2D rb;
     public Vector2[] positions = new Vector2[4];
@@ -13,10 +13,10 @@ public class LambrightMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        positions[0] = new Vector2(-9f, 33f);
-        positions[1] = new Vector2(6.5f, 33f);
-        positions[2] = new Vector2(6.5f, 37f);
-        positions[3] = new Vector2(-9f, 37f);
+        positions[0] = new Vector2(-48f, -9f);
+        positions[1] = new Vector2(-59f, -9f);
+        positions[2] = new Vector2(-59f, -3f);
+        positions[3] = new Vector2(-48f, -3f);
         rb.position = positions[0];
     }
 
