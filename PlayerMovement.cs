@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
+
 using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
@@ -9,16 +9,16 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     Vector2 movement;
     public float moveSpeed = 20f;
-    Collider2D currentTrigger = null;
+    public Collider2D currentTrigger = null;
     public ArrayList inventory = new ArrayList();
     public Camera[] cameras = new Camera[8];
     public ChickenMovement chicken;
     public Animator animator;
-    public Light2D globalLight;
+    public UnityEngine.Rendering.Universal.Light2D globalLight;
     public GameObject lambrightRoomObjects;
     private bool physicsMovement = false;
-    public AudioManager audioManager;
-
+    public GameObject CubeOnPedestal;
+    public HannMovement Hann;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,8 +26,6 @@ public class PlayerMovement : MonoBehaviour
         {
             cameras[i].enabled = false;
         }
-
-        audioManager.Play("Scheming-Weasel", true);
     }
 
     void Update()
@@ -45,6 +43,11 @@ public class PlayerMovement : MonoBehaviour
                             chicken.beginChickening();
                             inventory.Remove("Egg");
                         }
+                    } else if (currentTrigger.gameObject.name == "Pedestal")
+                    {
+                        inventory.Remove("RubiksCube");
+                        CubeOnPedestal.GetComponent("SpriteRenderer").sprite = "RubiksCube";
+                        Hann.GoToPedestal();
                     }
                     else if (string.Equals(currentTrigger.gameObject.name, "Flashlight"))
                     {
@@ -56,8 +59,7 @@ public class PlayerMovement : MonoBehaviour
                             Destroy(currentTrigger.GetComponent("BoxCollider2D"));
                         }
                         Destroy(currentTrigger);
-                    }
-                    else if (currentTrigger.gameObject.name == "Water")
+                    } else if (currentTrigger.gameObject.name == "Water")
                     {
                         if (inventory.Contains("Bucket"))
                         {
@@ -97,22 +99,15 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else if (currentTrigger.tag == "UpDoor")
                 {
-
                     string doorName = currentTrigger.gameObject.name;
                     movement.x = 0;
                     movement.y = 11;
                     rb.position = rb.position + movement;
-
-                    audioManager.Clear();
-                    audioManager.Play("DoorOpen", false);
-                    audioManager.Play("Sneaky-Snitch", true);
-                    
                     if (doorName == "SchultzToHallway")
                     {
                         cameras[0].enabled = false;
                         cameras[1].enabled = true;
-                    }
-                    else if (doorName == "StorageToHallway")
+                    } else if (doorName == "StorageToHallway")
                     {
                         cameras[2].enabled = false;
                         cameras[3].enabled = true;
@@ -147,11 +142,6 @@ public class PlayerMovement : MonoBehaviour
                     movement.x = 0;
                     movement.y = -11;
                     rb.position = rb.position + movement;
-
-                    audioManager.Clear();
-                    audioManager.Play("DoorOpen", false);
-                    audioManager.Play("Scheming-Weasel", true);
-
                     if (doorName == "DoorToSchultzRoom")
                     {
                         cameras[1].enabled = false;
@@ -186,8 +176,7 @@ public class PlayerMovement : MonoBehaviour
                         cameras[8].enabled = false;
                         cameras[5].enabled = true;
                     }
-                }
-                else if (string.Equals(currentTrigger.gameObject.name, "BreakerTrigger"))
+                } else if (string.Equals(currentTrigger.gameObject.name, "BreakerTrigger"))
                 {
                     gameObject.transform.GetChild(0).gameObject.SetActive(false);
                     globalLight.intensity = 1;
@@ -221,24 +210,18 @@ public class PlayerMovement : MonoBehaviour
             else if (currentTrigger.tag == "Teacher")
             {
                 Debug.Log("You Died");
-
             }
         }
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        /*
         animator.SetFloat("X", movement.x);
         animator.SetFloat("Y", movement.y);
 
-        */
-
-        /*
         if (chicken.giveBucket)
         {
             chicken.giveBucket = false;
             inventory.Add("Bucket");
         }
-        */
     }
 
     void FixedUpdate()
@@ -246,8 +229,7 @@ public class PlayerMovement : MonoBehaviour
         if (physicsMovement)
         {
             rb.AddForce(movement, ForceMode2D.Impulse);
-        }
-        else
+        } else
         {
             rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
         }
