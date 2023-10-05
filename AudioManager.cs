@@ -22,12 +22,11 @@ public class AudioManager : MonoBehaviour
     }
 
     public void Clear()
-    {
-        for (int i = 0; i < GetComponents<AudioSource>().Length; i++)
+    { 
+        foreach (AudioSource source in GetComponents<AudioSource>())
         {
-            AudioSource comp = GetComponent<AudioSource>();
-            Destroy(comp);
-            Debug.Log("Removed: " + comp.clip);
+            Debug.Log("Removing: " + source.clip);
+            Destroy(source);
         }
     }
 }
