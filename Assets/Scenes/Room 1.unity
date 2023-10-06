@@ -567,7 +567,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2250815035170154724, guid: 8659bbbff7a1fb7449962eb4f9e53786, type: 3}
       propertyPath: m_Intensity
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2250815035170154724, guid: 8659bbbff7a1fb7449962eb4f9e53786, type: 3}
       propertyPath: m_LightType
@@ -18213,7 +18213,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.6, y: 1.6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -18227,7 +18227,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044707919}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.37, y: 15.47, z: 0}
+  m_LocalPosition: {x: -27.37, y: 15.27, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18442,6 +18442,7 @@ GameObject:
   - component: {fileID: 1090683552}
   - component: {fileID: 1090683551}
   - component: {fileID: 1090683550}
+  - component: {fileID: 1090683554}
   m_Layer: 0
   m_Name: Hann
   m_TagString: Teacher
@@ -18483,6 +18484,7 @@ MonoBehaviour:
   hallway: {fileID: 1385105734}
   GoToThing: 0
   key: {fileID: 1477837822}
+  animator: {fileID: 1090683554}
 --- !u!58 &1090683551
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -18496,7 +18498,7 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.05, y: 0.05}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.2
 --- !u!50 &1090683552
@@ -18572,6 +18574,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1090683554
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090683548}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2aa980ccccb7589499dc7b406170922d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1092481700
 GameObject:
   m_ObjectHideFlags: 0
